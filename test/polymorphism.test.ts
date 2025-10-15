@@ -19,8 +19,26 @@ describe ('Polymorphism', () => {
     // Dimana dengan polymorphism, kita bisa mengirimkan object dari class Employee, Manager, VicePresident
     // karena ketiga class tersebut adalah turunan dari class Employee
 
+    //update: menambahkan typecasting dan instanceof, agar lebih spesifik dan aman
+    // agar tidak terjadi error saat mengakses properti atau method yang tidak ada di class induk
     function sayHello(employee: Employee): void {
-        console.info(`Hello ${employee.name}`);
+        if (employee instanceof VicePresident) {
+            const vp = employee as VicePresident;
+            console.info(`Hello, Vice President ${vp.name}`);
+        }else if (employee instanceof Manager) {
+            const manager = employee as Manager;
+            console.info(`Hello, Manager ${manager.name}`);
+        } else {
+            console.info(`Hello, Employee ${employee.name}`);
+        }
+
+        // namun perlu diingat, saat melakukan typecasting, kita harus yakin bahwa object tersebut benar-benar dari class yang kita casting
+        // jika tidak, maka akan terjadi error saat runtime, 
+        // selain itu juga untuk urutaan nya pastikan posisi child yang paling bawah dilakukan pengecekan di awal agar tidak terjadi kesalahan konversi
+        // contohnya, jika posisi VicePresident diatas Manager, maka saat kita mengirimkan object dari class VicePresident
+        // maka akan terdeteksi sebagai Manager, karena Manager adalah induk dari VicePresident
+        // sehingga saat kita melakukan konversi ke Manager, maka akan berhasil, namun saat kita mengakses properti atau method yang ada di VicePresident
+        // maka akan terjadi error, karena object tersebut sebenarnya adalah VicePresident, bukan Manager
     }
 
     it('Should can use polymorphism', function() {
@@ -44,6 +62,6 @@ describe ('Polymorphism', () => {
     it('Should can use polymorphism with function', function() {
         sayHello(new Employee("Saeful"));
         sayHello(new Manager("Rohmat"));
-        sayHello(new VicePresident("Saeful"));
+        sayHello(new VicePresident("Asep"));
     })
 })
